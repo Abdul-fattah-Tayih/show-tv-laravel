@@ -12,7 +12,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::middleware([\App\Http\Middleware\IncludeSeriesForNavbar::class])->group(function () {
+    Auth::routes();
 
-Route::get('/', function () {
-    return view('welcome');
+    Route::get('/', 'HomeController@index')->name('home');
+
+    Route::resource('series', 'SeriesController');
+    Route::resource('episode', 'EpisodesController');
+    Route::get('/search', 'SearchController@search')->name('search.index');
 });
