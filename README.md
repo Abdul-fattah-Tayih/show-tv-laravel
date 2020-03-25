@@ -7,6 +7,8 @@ To get started, clone the repository
 
 ``` npm install ```
 
+``` cp .env.example .env ```
+
 ``` php artisan key:generate ```
 
 Fill your database info then
