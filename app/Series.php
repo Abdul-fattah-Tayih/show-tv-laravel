@@ -14,6 +14,11 @@ class Series extends Model
         return $this->hasMany(Episode::class);
     }
 
+    public function followingUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_series')->withTimestamps();
+    }
+
     public function getLatestEpisodeThumbnailAttribute()
     {
         $episode = $this->episodes()->first();

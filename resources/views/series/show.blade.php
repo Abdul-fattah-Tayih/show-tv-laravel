@@ -15,7 +15,7 @@
                 <div class="card-body p-0">
                     <div class="row">
                         <div class="col-4">
-                            <img class="img-thumbnail" src="{{ $series->latestEpisodeThumbnail ?? 'https://i1.ytimg.com/vi/Dtvw-MVGD0g/maxresdefault.jpg' }}">
+                            <img class="img-thumbnail" src="{{ asset($series->latestEpisodeThumbnail) }}">
                         </div>
                         <div class="col-8 p-4">
                             <h3>{{ $series->title }}</h3>
@@ -23,7 +23,12 @@
                             <p class="text-secondary">
                                 <b>{{ $series->from_day }}</b> - <b>{{ $series->to_day }}</b> at {{ $series->time }}
                             </p>
-                            <button class="btn btn-primary">Follow</button>
+                            <follow-component
+                                follow_url="{{ route('series.follow', ['series' => $series]) }}"
+                                unfollow_url="{{ route('series.unfollow', ['series' => $series]) }}"
+                                follow_count="{{ $series->following_users_count }}"
+                                :user="{{ json_encode($userWithFollows) }}"
+                            ></follow-component>
                         </div>
                     </div>
                 </div>
@@ -49,6 +54,7 @@
                                 </a>
                                 <p>{!! $episode->description !!}</p>
                                 <p class="text-secondary">
+                                    <b>{{ $episode->formatted_duration }}</b> <br>
                                     {{ $episode->formatted_air_time }}
                                 </p>
                             </div>

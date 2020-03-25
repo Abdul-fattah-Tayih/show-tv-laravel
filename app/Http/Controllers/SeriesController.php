@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Series;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -20,69 +21,41 @@ class SeriesController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  Series $series
      * @return View
      */
-    public function show(Series $series)
+    public function show($seriesId)
     {
+        $series = Series::withCount('followingUsers')->findOrFail($seriesId);
         $episodes = $series->episodes;
-        return view('series.show', compact('series', 'episodes'));
+        $userWithFollows = [];
+
+        if (auth()->user()) {
+            $userWithFollows = User::with(['followedSeries' => function ($query) use ($seriesId) {
+                $query->where('series_id', $seriesId);
+            }])->findOrFail(auth()->user()->id);
+        }
+
+        return view('series.show', compact('series', 'episodes', 'userWithFollows'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function follow(Series $series)
     {
-        //
+        abort_unless(auth()->user() !== null, 403);
+
+        $series->followingUsers()->attach(auth()->user()->id);
+
+        return response('success', 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function unfollow(Series $series)
     {
-        //
-    }
+        abort_unless(auth()->user() !== null, 403);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $series->followingUsers()->detach(auth()->user()->id);
+
+        return response('success', 200);
     }
 }

@@ -15,6 +15,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="{{ asset('css/fontawesome-free-5.12.1-web/css/all.css') }}" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -63,6 +64,7 @@
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }} <span class="caret"></span>
+                                <img class="rounded" style="max-height: 2rem" src="{{ asset('storage/'.auth()->user()->user_image) }}">
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -81,7 +83,12 @@
                     <li class="nav-item">
                         <form method="GET" action="{{ route('search.index') }}">
                             <div class="input-group">
-                              <input type="text" name="term" class="form-control{{ $errors->has('term') ? ' is-invalid' : '' }}" placeholder="Search for series or shows">
+                              <input type="text" id="term" name="term" class="form-control" placeholder="Search for series or shows">
+                              @error('term')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                              @enderror
                               <div class="input-group-append">
                                 <button class="btn btn-outline-primary" type="submit">{{ __('Search') }}</button>
                               </div>
@@ -95,6 +102,9 @@
         <main>
             @yield('title')
             <div class="py-4">
+                @if(session()->has('error'))
+                    <div class="alert alert-danger">{{ session()->get('error') }}</div>
+                @endif
                 @yield('content')
             </div>
         </main>

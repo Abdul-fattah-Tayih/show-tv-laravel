@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Episode;
+use App\Http\Requests\SearchRequest;
 use App\Series;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function search(Request $request)
+    public function search(SearchRequest $request)
     {
         $query = trim($request->query('term'));
 

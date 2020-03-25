@@ -19,11 +19,12 @@
                                 <img class="img-thumbnail" src="{{ $episode->thumbnail ?? 'https://i1.ytimg.com/vi/Dtvw-MVGD0g/maxresdefault.jpg' }}">
                             </div>
                             <div class="col-8 p-4">
-                                <a href="{{ route('episode.show', ['episode' => $episode]) }}">
+                                <a href="{{ route('episode.show', ['episode' => $episode->id]) }}">
                                     <h3>{{ $episode->title }}</h3>
                                 </a>
                                 <p>{!! $episode->description !!}</p>
                                 <p class="text-secondary">
+                                    <b>{{ $episode->formatted_duration }}</b> <br>
                                     {{ $episode->formatted_air_time }}
                                 </p>
                             </div>

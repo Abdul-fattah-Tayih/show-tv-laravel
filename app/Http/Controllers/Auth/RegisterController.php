@@ -70,7 +70,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'user_image' => $data['user_image']->store('user_images'),
+            'user_image' => $data['user_image']->store('/user_images', ['disk' => 'public']),
         ]);
     }
 }

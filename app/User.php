@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'user_image'
     ];
 
     /**
@@ -39,6 +40,18 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class, 'user_role')->withTimestamps();
+    }
+
+    public function followedSeries()
+    {
+        return $this->belongsToMany(Series::class, 'user_series')->withTimestamps();
+    }
+
+    public function reactions()
+    {
+        return $this->belongsToMany(Reaction::class, 'episode_reactions')
+            ->withPivot('episode_id')
+            ->withTimestamps();
     }
 }

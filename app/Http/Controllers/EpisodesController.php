@@ -3,84 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Episode;
+use App\Reaction;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class EpisodesController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  Episode  $episode
      * @return View
      */
-    public function show(Episode $episode)
+    public function show($episodeId)
     {
-        return view('episodes.show', ['episode' => $episode]);
+        $episode = Episode::with('reactions')->findOrFail($episodeId);
+
+        $userWithReactions = [];
+
+        if (auth()->user()) {
+            $userWithReactions = User::with(['reactions' => function ($query) use ($episodeId) {
+                $query->where('episode_id', $episodeId);
+            }])->findOrFail(auth()->user()->id);
+        }
+
+        return view('episodes.show', compact('userWithReactions', 'episode'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function react(Request $request, Episode $episode)
     {
-        //
+        abort_unless(auth()->user() !== null, 403);
+
+        $request->validate([
+            'reaction_id' => ['required', 'numeric', 'exists:reactions,id']
+        ]);
+
+        $episode->reactions()->attach([$request->reaction_id => ['user_id' => auth()->user()->id]]);
+
+        return response()->json([
+            'reaction_id' => $request->reaction_id,
+            'episode_id' => $episode->id,
+            'name' => Reaction::find($request->reaction_id)->name,
+        ], 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function removeReact(Request $request, Episode $episode)
     {
-        //
-    }
+        abort_unless(auth()->user() !== null, 403);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $episode->reactions()
+            ->detach($request->reaction_id);
+
+        return response()->json([], 200);
     }
 }

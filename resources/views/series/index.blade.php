@@ -15,7 +15,7 @@
                     <div class="card-body p-0">
                         <div class="row">
                             <div class="col-4">
-                                <img class="img-thumbnail" src="{{ $singleSeries->latestEpisodeThumbnail ?? 'https://i1.ytimg.com/vi/Dtvw-MVGD0g/maxresdefault.jpg' }}">
+                                <img class="img-thumbnail" src="{{ asset($singleSeries->latestEpisodeThumbnail) }}">
                             </div>
                             <div class="col-8 p-4">
                                 <a href="{{ route('series.show', ['series' => $singleSeries]) }}">
