@@ -9,6 +9,8 @@ To get started, clone the repository
 
 ``` php artisan key:generate ```
 
+Fill your database info then
+
 ``` php artisan migrate ```
 
 ``` php artisan db:seed ```
