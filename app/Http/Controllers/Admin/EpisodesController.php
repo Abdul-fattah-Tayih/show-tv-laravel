@@ -27,7 +27,7 @@ class EpisodesController extends Controller
      */
     public function create()
     {
-        return view('admin.episode.create', ['series' => Series::all()]);
+        return view('admin.episodes.create', ['series' => Series::all()]);
     }
 
     /**
@@ -99,19 +99,27 @@ class EpisodesController extends Controller
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
             'air_time' => ['required', 'date'],
-            'thumbnail' => ['required', 'image', 'max:1024'],
-            'asset' => ['required', 'file', 'max:20000', 'mimes:mp4,mpeg,wmv'],
+            'thumbnail' => ['nullable', 'image', 'max:1024'],
+            'asset' => ['nullable', 'file', 'max:20000', 'mimes:mp4,mpeg,wmv'],
             'series_id' => ['required', 'exists:series,id'],
         ]);
 
-        $episode->update([
+        $createArr = [
             'title' => $request->title,
             'description' => $request->description,
             'air_time' => $request->air_time,
-            'thumbnail' => $request->thumbnail->store('/thumbnails', ['disk' => 'public']),
-            'asset' => $request->asset->store('/assets', ['disk' => 'public']),
             'series_id' => $request->series_id,
-        ]);
+        ];
+
+        if ($request->thumbnail) {
+            $createArr['thumbnail'] = $request->thumbnail->store('/thumbnails', ['disk' => 'public']);
+        }
+
+        if ($request->asset) {
+            $createArr['asset'] = $request->asset->store('/assets', ['disk' => 'public']);
+        }
+
+        $episode->update($createArr);
 
         session()->flash('success', 'Episode updated successfully');
 
