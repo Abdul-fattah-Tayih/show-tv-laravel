@@ -3,6 +3,10 @@ Simple laravel application that stores series and episodes, likes, dislikes and 
 
 To get started, clone the repository
 
+``` composer install ```
+
+``` npm install ```
+
 ``` php artisan key:generate ```
 
 ``` php artisan migrate ```
