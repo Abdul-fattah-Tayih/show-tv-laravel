@@ -20,3 +20,5 @@ Fill your database info then
 ``` php artisan admin:create ```
 
 ```npm run prod ```
+
+Go ahead and create series/episodes, once you are done ``` php artisan cache:clear ``` to empty cache and display the series links on the navbar
